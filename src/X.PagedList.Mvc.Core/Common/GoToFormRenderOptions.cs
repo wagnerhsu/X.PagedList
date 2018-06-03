@@ -70,7 +70,7 @@ namespace X.PagedList.Mvc.Common
         /// <summary>
         /// Class that will be applied for input field
         /// </summary>
-        public String InputFieldClass { get; set; }
+        public string InputFieldClass { get; set; }
 
         /// <summary>
         /// Class that will be applied for submit button

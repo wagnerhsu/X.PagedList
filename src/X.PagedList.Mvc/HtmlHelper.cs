@@ -23,10 +23,7 @@ namespace X.PagedList.Mvc
             tagBuilder.InnerHtml += innerHtml;
         }
 
-        private static string TagBuilderToString(TagBuilder tagBuilder)
-        {
-            return tagBuilder.ToString();
-        }
+        private static string TagBuilderToString(TagBuilder tagBuilder) => tagBuilder.ToString();
 
         private static string TagBuilderToString(TagBuilder tagBuilder, TagRenderMode renderMode)
         {
@@ -49,11 +46,11 @@ namespace X.PagedList.Mvc
                 li.AddCssClass(@class);
             }
 
-            if (options is PagedListRenderOptions)
+            if (options is PagedListRenderOptions renderOptions)
             {
-                if (((PagedListRenderOptions)options).FunctionToTransformEachPageLink != null)
+                if (renderOptions.FunctionToTransformEachPageLink != null)
                 {
-                    return ((PagedListRenderOptions)options).FunctionToTransformEachPageLink(li, inner);
+                    return renderOptions.FunctionToTransformEachPageLink(li, inner);
                 }
             }
 
@@ -85,6 +82,7 @@ namespace X.PagedList.Mvc
         {
             var targetPageNumber = list.PageNumber - 1;
             var previous = new TagBuilder("a");
+            
             AppendHtml(previous, string.Format(options.LinkToPreviousPageFormat, targetPageNumber));
             previous.Attributes["rel"] = "prev";
 
@@ -107,8 +105,10 @@ namespace X.PagedList.Mvc
         {
             var format = options.FunctionToDisplayEachPageNumber
                 ?? (pageNumber => string.Format(options.LinkToIndividualPageFormat, pageNumber));
+            
             var targetPageNumber = i;
             var page = i == list.PageNumber ? new TagBuilder("span") : new TagBuilder("a");
+            
             SetInnerText(page, format(targetPageNumber));
 
             foreach (var c in options.PageClasses ?? Enumerable.Empty<string>())
@@ -130,6 +130,7 @@ namespace X.PagedList.Mvc
         {
             var targetPageNumber = list.PageNumber + 1;
             var next = new TagBuilder("a");
+            
             AppendHtml(next, string.Format(options.LinkToNextPageFormat, targetPageNumber));
             next.Attributes["rel"] = "next";
 
@@ -198,9 +199,10 @@ namespace X.PagedList.Mvc
         ///<param name = "list">The PagedList to use as the data source.</param>
         ///<param name = "generatePageUrl">A function that takes the page number of the desired page and returns a URL-string that will load that page.</param>
         ///<returns>Outputs the paging control HTML.</returns>
-        public static HtmlString PagedListPager(this System.Web.Mvc.HtmlHelper html,
-                                                   IPagedList list,
-                                                   Func<int, string> generatePageUrl)
+        public static HtmlString PagedListPager(
+            this System.Web.Mvc.HtmlHelper html,
+            IPagedList list,
+            Func<int, string> generatePageUrl)
         {
             return PagedListPager(html, list, generatePageUrl, new PagedListRenderOptions());
         }
@@ -213,12 +215,14 @@ namespace X.PagedList.Mvc
         ///<param name = "generatePageUrl">A function that takes the page number  of the desired page and returns a URL-string that will load that page.</param>
         ///<param name = "options">Formatting options.</param>
         ///<returns>Outputs the paging control HTML.</returns>
-        public static HtmlString PagedListPager(this System.Web.Mvc.HtmlHelper html,
+        public static HtmlString PagedListPager(
+            this System.Web.Mvc.HtmlHelper html,
             IPagedList list,
             Func<int, string> generatePageUrl,
             PagedListRenderOptionsBase options)
         {
-            if (options.Display == PagedListDisplayMode.Never || (options.Display == PagedListDisplayMode.IfNeeded && list.PageCount <= 1))
+            if (options.Display == PagedListDisplayMode.Never ||
+                (options.Display == PagedListDisplayMode.IfNeeded && list.PageCount <= 1))
                 return null;
 
             var listItemLinks = new List<TagBuilder>();
@@ -227,25 +231,31 @@ namespace X.PagedList.Mvc
             var firstPageToDisplay = 1;
             var lastPageToDisplay = list.PageCount;
             var pageNumbersToDisplay = lastPageToDisplay;
+            
             if (options.MaximumPageNumbersToDisplay.HasValue && list.PageCount > options.MaximumPageNumbersToDisplay)
             {
                 // cannot fit all pages into pager
                 var maxPageNumbersToDisplay = options.MaximumPageNumbersToDisplay.Value;
                 firstPageToDisplay = list.PageNumber - maxPageNumbersToDisplay / 2;
+                
                 if (firstPageToDisplay < 1)
                     firstPageToDisplay = 1;
+                
                 pageNumbersToDisplay = maxPageNumbersToDisplay;
                 lastPageToDisplay = firstPageToDisplay + pageNumbersToDisplay - 1;
+                
                 if (lastPageToDisplay > list.PageCount)
                     firstPageToDisplay = list.PageCount - maxPageNumbersToDisplay + 1;
             }
 
             //first
-            if (options.DisplayLinkToFirstPage == PagedListDisplayMode.Always || (options.DisplayLinkToFirstPage == PagedListDisplayMode.IfNeeded && firstPageToDisplay > 1))
+            if (options.DisplayLinkToFirstPage == PagedListDisplayMode.Always ||
+                (options.DisplayLinkToFirstPage == PagedListDisplayMode.IfNeeded && firstPageToDisplay > 1))
                 listItemLinks.Add(First(list, generatePageUrl, options));
 
             //previous
-            if (options.DisplayLinkToPreviousPage == PagedListDisplayMode.Always || (options.DisplayLinkToPreviousPage == PagedListDisplayMode.IfNeeded && !list.IsFirstPage))
+            if (options.DisplayLinkToPreviousPage == PagedListDisplayMode.Always ||
+                (options.DisplayLinkToPreviousPage == PagedListDisplayMode.IfNeeded && !list.IsFirstPage))
                 listItemLinks.Add(Previous(list, generatePageUrl, options));
 
             //text
@@ -332,6 +342,7 @@ namespace X.PagedList.Mvc
 
             var ul = new TagBuilder("ul");
             AppendHtml(ul, listItemLinksString);
+            
             foreach (var c in options.UlElementClasses ?? Enumerable.Empty<string>())
                 ul.AddCssClass(c);
 
@@ -342,14 +353,20 @@ namespace X.PagedList.Mvc
             }
 
             var outerDiv = new TagBuilder("div");
+            
             foreach (var c in options.ContainerDivClasses ?? Enumerable.Empty<string>())
                 outerDiv.AddCssClass(c);
+            
             AppendHtml(outerDiv, TagBuilderToString(ul));
 
             return new HtmlString(TagBuilderToString(outerDiv));
         }
 
-        private static TagBuilder PreviousEllipsis(IPagedList list, Func<int, string> generatePageUrl, PagedListRenderOptionsBase options, int firstPageToDisplay)
+        private static TagBuilder PreviousEllipsis(
+            IPagedList list, 
+            Func<int, string> generatePageUrl, 
+            PagedListRenderOptionsBase options, 
+            int firstPageToDisplay)
         {
             var targetPageNumber = firstPageToDisplay - 1;
             var previous = new TagBuilder("a")
@@ -390,7 +407,10 @@ namespace X.PagedList.Mvc
         ///<param name="list">The PagedList to use as the data source.</param>
         ///<param name="formAction">The URL this form should submit the GET request to.</param>
         ///<returns>Outputs the "Go To Page:" form HTML.</returns>
-        public static HtmlString PagedListGoToPageForm(this System.Web.Mvc.HtmlHelper html, IPagedList list, string formAction)
+        public static HtmlString PagedListGoToPageForm(
+            this System.Web.Mvc.HtmlHelper html, 
+            IPagedList list, 
+            string formAction)
         {
             return PagedListGoToPageForm(html, list, formAction, "page");
         }
@@ -403,10 +423,11 @@ namespace X.PagedList.Mvc
         ///<param name="formAction">The URL this form should submit the GET request to.</param>
         ///<param name="inputFieldName">The querystring key this form should submit the new page number as.</param>
         ///<returns>Outputs the "Go To Page:" form HTML.</returns>
-        public static HtmlString PagedListGoToPageForm(this System.Web.Mvc.HtmlHelper html,
-                                                          IPagedList list,
-                                                          string formAction,
-                                                          string inputFieldName)
+        public static HtmlString PagedListGoToPageForm(
+            this System.Web.Mvc.HtmlHelper html,
+            IPagedList list,
+            string formAction,
+            string inputFieldName)
         {
             return PagedListGoToPageForm(html, list, formAction, new GoToFormRenderOptions(inputFieldName));
         }

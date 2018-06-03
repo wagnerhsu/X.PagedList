@@ -68,10 +68,13 @@ namespace X.PagedList
 		/// <param name="pageSize">The maximum size of any individual subset.</param>
 		/// <exception cref="ArgumentOutOfRangeException">The specified index cannot be less than zero.</exception>
 		/// <exception cref="ArgumentOutOfRangeException">The specified page size cannot be less than one.</exception>
-		public PagedList(IQueryable<T> superset, int pageNumber, int pageSize)
+		public PagedList(
+			IQueryable<T> superset,
+			int pageNumber,
+			int pageSize)
 			: base(pageNumber, pageSize, superset?.Count() ?? 0)
 		{
-			if (TotalItemCount > 0)
+			if (TotalItemCount > 0 && superset != null)
 			{
 				Subset.AddRange(pageNumber == 1
 					? superset.Take(pageSize).ToList()
@@ -103,14 +106,7 @@ namespace X.PagedList
 			TotalItemCount = pagedList.TotalItemCount;
 			PageSize = pagedList.PageSize;
 			PageNumber = pagedList.PageNumber;
-			PageCount = pagedList.PageCount;
-			HasPreviousPage = pagedList.HasPreviousPage;
-			HasNextPage = pagedList.HasNextPage;
-			IsFirstPage = pagedList.IsFirstPage;
-			IsLastPage = pagedList.IsLastPage;
-			FirstItemOnPage = pagedList.FirstItemOnPage;
-			LastItemOnPage = pagedList.LastItemOnPage;
-
+			
 			Subset.AddRange(superset);
 		}
 	}

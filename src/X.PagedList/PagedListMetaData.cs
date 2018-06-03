@@ -30,15 +30,13 @@
 			LastItemOnPage = pagedList.LastItemOnPage;
 		}
 
-		#region IPagedList Members
-
 		/// <summary>
 		/// 	Total number of subsets within the superset.
 		/// </summary>
 		/// <value>
 		/// 	Total number of subsets within the superset.
 		/// </value>
-		public int PageCount { get; protected set; }
+		public int PageCount { get; }
 
 		/// <summary>
 		/// 	Total number of objects contained within the superset.
@@ -46,7 +44,7 @@
 		/// <value>
 		/// 	Total number of objects contained within the superset.
 		/// </value>
-		public int TotalItemCount { get; protected set; }
+		public int TotalItemCount { get; }
 		
 		/// <summary>
 		/// 	One-based index of this subset within the superset.
@@ -54,7 +52,7 @@
 		/// <value>
 		/// 	One-based index of this subset within the superset.
 		/// </value>
-		public int PageNumber { get; protected set; }
+		public int PageNumber { get; }
 
 		/// <summary>
 		/// 	Maximum size any individual subset.
@@ -62,7 +60,7 @@
 		/// <value>
 		/// 	Maximum size any individual subset.
 		/// </value>
-		public int PageSize { get; protected set; }
+		public int PageSize { get; }
 
 		/// <summary>
 		/// 	Returns true if this is NOT the first subset within the superset.
@@ -70,7 +68,7 @@
 		/// <value>
 		/// 	Returns true if this is NOT the first subset within the superset.
 		/// </value>
-		public bool HasPreviousPage { get; protected set; }
+		public bool HasPreviousPage { get; }
 
 		/// <summary>
 		/// 	Returns true if this is NOT the last subset within the superset.
@@ -78,7 +76,7 @@
 		/// <value>
 		/// 	Returns true if this is NOT the last subset within the superset.
 		/// </value>
-		public bool HasNextPage { get; protected set; }
+		public bool HasNextPage { get; }
 
 		/// <summary>
 		/// 	Returns true if this is the first subset within the superset.
@@ -86,7 +84,7 @@
 		/// <value>
 		/// 	Returns true if this is the first subset within the superset.
 		/// </value>
-		public bool IsFirstPage { get; protected set; }
+		public bool IsFirstPage { get; }
 
 		/// <summary>
 		/// 	Returns true if this is the last subset within the superset.
@@ -94,7 +92,7 @@
 		/// <value>
 		/// 	Returns true if this is the last subset within the superset.
 		/// </value>
-		public bool IsLastPage { get; protected set; }
+		public bool IsLastPage { get; }
 
 		/// <summary>
 		/// 	One-based index of the first item in the paged subset.
@@ -102,7 +100,7 @@
 		/// <value>
 		/// 	One-based index of the first item in the paged subset.
 		/// </value>
-		public int FirstItemOnPage { get; protected set; }
+		public int FirstItemOnPage { get; }
 
 		/// <summary>
 		/// 	One-based index of the last item in the paged subset.
@@ -110,8 +108,7 @@
 		/// <value>
 		/// 	One-based index of the last item in the paged subset.
 		/// </value>
-		public int LastItemOnPage { get; protected set; }
+		public int LastItemOnPage { get; }
 
-		#endregion
 	}
 }
