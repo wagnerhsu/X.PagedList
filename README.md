@@ -46,7 +46,7 @@ public class ProductController : Controller
 @{
     ViewBag.Title = "Product Listing"
 }
-@using X.PagedList.Mvc; //import this so we get our HTML Helper
+@using X.PagedList.Mvc.Core; //import this so we get our HTML Helper
 @using X.PagedList; //import this so we can cast our list to IPagedList (only necessary because ViewBag is dynamic)
 
 <!-- import the included stylesheet for some (very basic) default styling -->
@@ -178,6 +178,19 @@ You can instantiate [**PagedListRenderOptions**](https://github.com/dncuug/X.Pag
 
 <h3>With Delimiter</h3>
 @Html.PagedListPager((IPagedList)ViewBag.OnePageOfProducts, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions { DelimiterBetweenPageNumbers = "|" })
+```
+
+### Bootstrap 4 Pager Example
+
+Below is an example configuration that uses the Boostrap 4 pager clases as per https://getbootstrap.com/docs/4.1/components/pagination/
+
+```html
+
+@Html.PagedListPager((IPagedList)ViewBag.OnePageOfProducts, page => Url.Action("Index", new { page = page }), 
+    new PagedListRenderOptions {
+        LiElementClasses = new string[] { "page-item" },
+        PageClasses = new string[] { "page-link" }
+})
 ```
 
 ## License
